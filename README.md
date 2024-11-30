@@ -1,6 +1,7 @@
 # go-future
 [![Tests](https://github.com/seprich/go-future/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/seprich/go-future/actions/workflows/tests.yml)
 [![Latest Version](https://img.shields.io/github/v/tag/seprich/go-future?label=version&sort=semver)](https://github.com/seprich/go-future/tags)
+[![gocard](https://goreportcard.com/badge/github.com/seprich/go-future)](https://goreportcard.com/report/github.com/seprich/go-future)
 ## Introduction
 Lightweight Future abstraction over goroutines and return value channels.
 The aim of this library is to introduce a simple model for running goroutines, and collecting results from them.
