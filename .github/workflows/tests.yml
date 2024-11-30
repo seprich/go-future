@@ -1,0 +1,25 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup go toolchain
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.3'
+          cache: false
+      - name: Show go version
+        run: go version
+      - name: Run Tests
+        run: go test -v
