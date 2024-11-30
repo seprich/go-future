@@ -43,6 +43,45 @@ func TestAccessResultMultipleTimes(t *testing.T) {
 	}
 }
 
+func TestFutureReturnsError(t *testing.T) {
+	f1 := NewFuture1(asyncAddOne, -1)
+	f2 := NewFuture1(asyncAddOne, 2)
+	assertNoError[int](t)(f2.Await())
+	expected := "no negatives numbers allowed for this function"
+	err := f1.AwaitForDone()
+	if err == nil || err.Error() != expected {
+		t.Errorf("Expected error: '%s', got: '%v'", expected, err)
+	}
+}
+
+func TestPanicHandling(t *testing.T) {
+	var captured string
+	expected := "set to panic"
+	panicCatcher := func() {
+		r := recover()
+		if t, k := r.(string); k {
+			captured = t
+		}
+	}
+
+	// Notice that the goroutine spawned for this Future does panic internally, which then gets captured into the Future
+	//    (otherwise non-captured panic would kill the whole software, which usually is undesired)
+	fut := NewFuture1(asyncAddOne, -2000)
+	wrapperFn := func() (int, error) {
+		defer panicCatcher()
+		// Await recognizes that the future resolved into panic and will throw the panic here
+		return fut.Await()
+	}
+	ret, err := wrapperFn()
+	if captured != expected {
+		t.Errorf("Expected panic: '%s', got: '%v'", expected, captured)
+	}
+	// ret, and err got "nothing" meaning their values are at golang defaults:
+	if ret != 0 || err != nil {
+		t.Error("Unexpected")
+	}
+}
+
 func TestCancellableFuture(t *testing.T) {
 	ctx, cancelFn := context.WithCancel(context.Background())
 	fut := NewFuture2(asyncCancelable, ctx, "one")
