@@ -1,3 +1,3 @@
 module github.com/seprich/go-future
 
-go 1.23.3
+go 1.23.0
